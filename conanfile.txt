@@ -1,0 +1,16 @@
+# Docs at https://docs.conan.io/en/latest/reference/conanfile_txt.html
+
+[requires]
+fmt/9.1.0
+spdlog/1.11.0
+gtest/1.12.1
+abseil/20220623.0
+stb/cci.20220909
+glm/cci.20230113
+
+
+[options]
+
+
+[generators]
+cmake_find_package
