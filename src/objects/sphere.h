@@ -1,17 +1,17 @@
 #ifndef PROJETO_PG_SPHERE_H
 #define PROJETO_PG_SPHERE_H
 
-#include <utility>
 #include <vector>
 
 #include <glm/glm.hpp>
 
 #include "object.h"
+#include "renderer/hit_payload.h"
 #include "renderer/ray.h"
 
 class Sphere: public Object {
 public:
-    explicit Sphere(const glm::vec3 &center, float radius);
+    explicit Sphere(const glm::vec3 &center, float radius, const glm::vec3 &color);
 
     Sphere(const Sphere &) = default;
     Sphere(Sphere &&) = delete;
@@ -19,8 +19,7 @@ public:
     Sphere &operator=(Sphere &&) = delete;
     ~Sphere() override = default;
 
-    std::pair<float, glm::vec4>
-    TraceRay(const Ray &ray, const glm::vec3 &lightDir, int bounces) override;
+    HitPayload Intersect(const Ray &ray, int bounces) override;
 
     [[nodiscard]] inline const glm::vec3 &Center() const {
         return m_center;
@@ -33,6 +32,7 @@ public:
 private:
     glm::vec3 m_center;
     float m_radius;
+    glm::vec3 m_color;
 };
 
 #endif /* PROJETO_PG_SPHERE_H */

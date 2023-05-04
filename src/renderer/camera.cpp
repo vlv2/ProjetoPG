@@ -38,15 +38,13 @@ Camera::Camera(const glm::vec3 &position,
         m_fov(fov),
         m_nearClip(nearClip),
         m_farClip(farClip) {
-    // m_view = LookAt();
-    m_view = glm::lookAt(m_position, m_target, m_upGuide);
+    m_view = LookAt(m_position, m_target, m_upGuide);
     m_inverseView = glm::inverse(m_view);
-    // m_projection = Projection();
-    m_projection = glm::perspectiveFov(glm::radians(m_fov),
-                                       static_cast<float>(m_width),
-                                       static_cast<float>(m_height),
-                                       m_nearClip,
-                                       m_farClip);
+    m_projection = Projection(glm::radians(m_fov),
+                              static_cast<float>(m_width),
+                              static_cast<float>(m_height),
+                              m_nearClip,
+                              m_farClip);
     m_inverseProjection = glm::inverse(m_projection);
 }
 
@@ -59,44 +57,42 @@ glm::vec3 Camera::CalculateRayDirection(const glm::vec2 &coord) {
     return rayDirection;
 }
 
-glm::mat4 Camera::LookAt() const {
-    glm::vec3 forward = glm::normalize(m_target - m_position);
-    glm::vec3 right = glm::normalize(glm::cross(forward, m_upGuide));
-    glm::vec3 up = glm::cross(right, forward);
+glm::mat4 Camera::LookAt(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &cameraUp) {
+    // Based on glm::lookAt
 
-    // Set the translation part of the matrix
-    glm::mat4 translation = glm::mat4(1.0f);
-    translation[3][0] = -m_position.x;
-    translation[3][1] = -m_position.y;
-    translation[3][2] = -m_position.z;
+    const glm::vec3 forward = glm::normalize(center - eye);
+    const glm::vec3 right = glm::normalize(glm::cross(forward, cameraUp));
+    const glm::vec3 up = glm::cross(right, forward);
 
-    // Set the rotation part of the matrix
-    glm::mat4 rotation = glm::mat4(1.0f);
-    rotation[0][0] = right.x;
-    rotation[1][0] = right.y;
-    rotation[2][0] = right.z;
-    rotation[0][1] = up.x;
-    rotation[1][1] = up.y;
-    rotation[2][1] = up.z;
-    rotation[0][2] = -forward.x;
-    rotation[1][2] = -forward.y;
-    rotation[2][2] = -forward.z;
+    glm::mat4 result {1.0f};
+    result[0][0] = right.x;
+    result[1][0] = right.y;
+    result[2][0] = right.z;
+    result[0][1] = up.x;
+    result[1][1] = up.y;
+    result[2][1] = up.z;
+    result[0][2] = -forward.x;
+    result[1][2] = -forward.y;
+    result[2][2] = -forward.z;
+    result[3][0] = -glm::dot(right, eye);
+    result[3][1] = -glm::dot(up, eye);
+    result[3][2] = glm::dot(forward, eye);
 
-    return rotation * translation;
+    return result;
 }
 
-glm::mat4 Camera::Projection() const {
-    float f = 1.0f / std::tan(glm::radians(m_fov) * 0.5f);
-    float range = 1.0f / (m_nearClip - m_farClip);
-    float aspect = static_cast<float>(m_width) / static_cast<float>(m_height);
+glm::mat4 Camera::Projection(float fov, float width, float height, float zNear, float zFar) {
+    // Based on glm::perspectiveFov
 
-    glm::mat4 result;
-    result[0][0] = f / aspect;
-    result[1][1] = f;
-    result[2][2] = -1.0f * (m_nearClip + m_farClip) * range;
-    result[2][3] = 1.0f;
-    result[3][2] = 2.0f * m_nearClip * m_farClip * range;
-    result[3][3] = 0.0f;
+    const float h = glm::cos(0.5f * fov) / glm::sin(0.5f * fov);
+    const float w = h * height / width;
+
+    glm::mat4 result(0.0f);
+    result[0][0] = w;
+    result[1][1] = h;
+    result[2][2] = -zFar / (zFar - zNear);
+    result[2][3] = -1.0f;
+    result[3][2] = (-2.0f * zFar * zNear) / (zFar - zNear);
 
     return result;
 }

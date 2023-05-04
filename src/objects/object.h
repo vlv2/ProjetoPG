@@ -1,12 +1,9 @@
 #ifndef PROJETO_PG_OBJECT_H
 #define PROJETO_PG_OBJECT_H
 
-#include <string>
-#include <utility>
-#include <vector>
-
 #include <glm/glm.hpp>
 
+#include "renderer/hit_payload.h"
 #include "renderer/ray.h"
 
 enum class ObjectType { PLANE, SPHERE, TRIANGLE, TRIANGLES_MESH };
@@ -22,8 +19,7 @@ public:
 
     virtual ~Object() = default;
 
-    virtual std::pair<float, glm::vec4>
-    TraceRay(const Ray &ray, const glm::vec3 &lightDir, int bounces) = 0;
+    virtual HitPayload Intersect(const Ray &ray, int bounces) = 0;
 
     [[nodiscard]] inline const ObjectType &Type() const {
         return m_objectType;

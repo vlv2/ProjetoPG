@@ -54,8 +54,11 @@ private:
     glm::mat4 m_view {1.0f};
     glm::mat4 m_inverseView {1.0f};
 
-    [[nodiscard]] glm::mat4 LookAt() const;
-    [[nodiscard]] glm::mat4 Projection() const;
+    [[nodiscard]] static glm::mat4
+    LookAt(const glm::vec3 &eye, const glm::vec3 &center, const glm::vec3 &cameraUp);
+
+    [[nodiscard]] static glm::mat4
+    Projection(float fov, float width, float height, float zNear, float zFar);
 };
 
 #endif /* PROJETO_PG_CAMERA_H */

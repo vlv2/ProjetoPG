@@ -8,6 +8,7 @@ add_executable(
         objects/object.h objects/object.cpp
         objects/sphere.h objects/sphere.cpp
         renderer/ray.h renderer/ray.cpp renderer/camera.h renderer/camera.cpp
+        renderer/hit_payload.h renderer/hit_payload.cpp
 )
 target_link_libraries(
     main
