@@ -19,7 +19,7 @@ public:
 
     virtual ~Object() = default;
 
-    virtual HitPayload Intersect(const Ray &ray, int bounces) = 0;
+    virtual HitPayload Intersect(const Ray &ray) = 0;
 
     [[nodiscard]] inline const ObjectType &Type() const {
         return m_objectType;

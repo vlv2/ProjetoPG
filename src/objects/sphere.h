@@ -19,7 +19,7 @@ public:
     Sphere &operator=(Sphere &&) = delete;
     ~Sphere() override = default;
 
-    HitPayload Intersect(const Ray &ray, int bounces) override;
+    HitPayload Intersect(const Ray &ray) override;
 
     [[nodiscard]] inline const glm::vec3 &Center() const {
         return m_center;
